@@ -144,6 +144,28 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\Engine\Camera.h" />
+    <ClInclude Include="source\Engine\GameEngine.h" />
+    <ClInclude Include="source\Engine\GraphicsEngine.h" />
+    <ClInclude Include="source\Engine\Input.h" />
+    <ClInclude Include="source\Engine\PlayerSlot.h" />
+    <ClInclude Include="source\globals.h" />
+    <ClInclude Include="source\Managers\GameManager.h" />
+    <ClInclude Include="source\Managers\MenuManager.h" />
+    <ClInclude Include="source\Screens\GUIOverlay.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\Engine\Camera.cpp" />
+    <ClCompile Include="source\Engine\GameEngine.cpp" />
+    <ClCompile Include="source\Engine\GraphicsEngine.cpp" />
+    <ClCompile Include="source\Engine\Input.cpp" />
+    <ClCompile Include="source\Engine\main.cpp" />
+    <ClCompile Include="source\Engine\PlayerSlot.cpp" />
+    <ClCompile Include="source\Managers\GameManager.cpp" />
+    <ClCompile Include="source\Managers\MenuManager.cpp" />
+    <ClCompile Include="source\Screens\GUIOverlay.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="packages\directxtk12_desktop_2015.2017.12.13.1\build\native\directxtk12_desktop_2015.targets" Condition="Exists('packages\directxtk12_desktop_2015.2017.12.13.1\build\native\directxtk12_desktop_2015.targets')" />
