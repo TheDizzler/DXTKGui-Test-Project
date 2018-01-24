@@ -3,6 +3,7 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+
 # User-specific files
 *.suo
 *.user
@@ -42,11 +43,13 @@ TestResult.xml
 [Rr]eleasePS/
 dlldata.c
 
+
 # .NET Core
 project.lock.json
 project.fragment.lock.json
 artifacts/
 **/Properties/launchSettings.json
+
 
 *_i.c
 *_p.c
@@ -113,9 +116,11 @@ _TeamCity*
 # DotCover is a Code Coverage Tool
 *.dotCover
 
+
 # Visual Studio code coverage results
 *.coverage
 *.coveragexml
+
 
 # NCrunch
 _NCrunch_*
@@ -166,7 +171,7 @@ PublishScripts/
 !**/packages/build/
 # Uncomment if necessary however generally it will be regenerated when needed
 #!**/packages/repositories.config
-# NuGet v3's project.json files produces more ignorable files
+# NuGet v3's project.json files produces more ignoreable files
 *.nuget.props
 *.nuget.targets
 
@@ -199,6 +204,7 @@ ClientBin/
 *.jfm
 *.pfx
 *.publishsettings
+node_modules/
 orleans.codegen.cs
 
 # Since there are multiple workflows, uncomment next line to ignore bower_components
@@ -221,6 +227,7 @@ UpgradeLog*.htm
 *.ldf
 *.ndf
 
+
 # Business Intelligence projects
 *.rdl.data
 *.bim.layout
@@ -239,11 +246,13 @@ node_modules/
 # Typescript v1 declaration files
 typings/
 
+
 # Visual Studio 6 build log
 *.plg
 
 # Visual Studio 6 workspace options file
 *.opt
+
 
 # Visual Studio 6 auto-generated workspace file (contains which files were open etc.)
 *.vbw
@@ -286,3 +295,4 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
+
