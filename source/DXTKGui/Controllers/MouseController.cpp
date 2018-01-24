@@ -6,19 +6,18 @@
 MouseController::MouseController(HWND h) {
 
 	hwnd = h;
-	mouse.reset(new Mouse());
-	mouse->SetWindow(hwnd);
+	//mouse.reset(new Mouse());
+	mouse.SetWindow(hwnd);
 	layerDepth = 1.0;
 
 }
 
 MouseController::~MouseController() {
-	mouse.reset();
 }
 
 
 void MouseController::setState(Mouse::Mode mode) {
-	mouse->SetMode(mode);
+	mouse.SetMode(mode);
 }
 
 bool MouseController::loadMouseIcon(GUIFactory* guiFactory,
@@ -48,12 +47,12 @@ void MouseController::loadMouseIcon(GraphicsAsset* iconAsset) {
 void MouseController::saveMouseState() {
 
 	lastState = state;
-	state = mouse->GetState();
+	state = mouse.GetState();
 	setPosition(Vector2(state.x, state.y));
 	// This is the absolute position of the mouse relative
 	// to the upper-left corner of the window
 
-
+	
 	isPressed = !lastState.leftButton && state.leftButton;
 	isClicked = lastState.leftButton && !state.leftButton;
 
@@ -80,7 +79,7 @@ void MouseController::draw(SpriteBatch* batch) {
 int MouseController::scrollWheelValue() {
 
 	int delta = state.scrollWheelValue / WHEEL_DELTA;
-	mouse->ResetScrollWheelValue();
+	mouse.ResetScrollWheelValue();
 	return delta;
 }
 
@@ -112,6 +111,9 @@ bool MouseController::rightButtonLast() {
 bool MouseController::clicked() {
 
 	if (isClicked) {
+		wostringstream wss;
+		wss << "Clicked! " << endl;
+		OutputDebugString(wss.str().c_str());
 		isClicked = false;
 		return true;
 	}
@@ -121,6 +123,9 @@ bool MouseController::clicked() {
 bool MouseController::pressed() {
 
 	if (isPressed) {
+		wostringstream wss;
+		wss << "Pressed! " << endl;
+		OutputDebugString(wss.str().c_str());
 		isPressed = false;
 		return true;
 	}
@@ -158,5 +163,10 @@ bool MouseController::middlePressed() {
 		return true;
 	}
 	return false;
+}
+
+void MouseController::resetPressed() {
+	isPressed = true;
+	lastState.leftButton = true;
 }
 

@@ -1,3 +1,4 @@
+#include "../pch.h"
 #include "GUIOverlay.h"
 #include "../Engine/GameEngine.h"
 #include "../DXTKGui/StringHelper.h"

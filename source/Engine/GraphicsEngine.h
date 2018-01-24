@@ -20,7 +20,6 @@ using namespace Microsoft::WRL;
 
 class GraphicsEngine {
 public:
-	GraphicsEngine();
 	virtual ~GraphicsEngine();
 
 	bool initD3D(HWND hwnd);
@@ -35,12 +34,7 @@ public:
 	vector<DXGI_MODE_DESC> getDisplayModeList(size_t displayIndex);
 	vector<DXGI_MODE_DESC> getDisplayModeList(ComPtr<IDXGIOutput> display);
 
-	bool setAdapter(size_t adapterIndex);
-	bool changeDisplayMode(size_t newDisplayModeIndex);
-	bool setFullScreen(bool isFullScreen);
-	void setViewport(int xPos, int yPos, int width, int height);
-	/* Call when game loses focus. */
-	bool stopFullScreen();
+	
 
 	size_t getSelectedAdapterIndex();
 	size_t getSelectedDisplayIndex();
@@ -102,6 +96,13 @@ protected:
 	void initializeViewport();
 	bool populateDisplayModeList(ComPtr<IDXGIOutput> adapterOut);
 	void setDisplayMode(size_t selectedIndex);
+
+	bool setAdapter(size_t adapterIndex);
+	bool changeDisplayMode(size_t newDisplayModeIndex);
+	bool setFullScreen(bool isFullScreen);
+	void setViewport(int xPos, int yPos, int width, int height);
+	/* Call when game loses focus. */
+	bool stopFullScreen();
 
 	/** A debug function to make sure we're using the correct graphics adapter. */
 	bool verifyAdapter(ComPtr<ID3D11Device> deviceCheck);

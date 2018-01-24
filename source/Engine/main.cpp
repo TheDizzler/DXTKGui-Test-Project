@@ -17,8 +17,10 @@
 #include "GameEngine.h"
 
 
-
-
+int Globals::WINDOW_WIDTH = 800;
+int Globals::WINDOW_HEIGHT = 600;
+int Globals::vsync_enabled = 0;
+bool Globals::FULL_SCREEN = false;
 
 LPCTSTR wndClassName = L"DirectXTK GUI Demo";
 HWND hwnd;
@@ -126,9 +128,6 @@ int messageLoop() {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		} else {	// game code
-
-			//double frameTime = getFrameTime();
-
 			gameEngine->run(getFrameTime());
 
 		}
@@ -139,10 +138,7 @@ int messageLoop() {
 
 }
 
-int Globals::WINDOW_WIDTH = 800;
-int Globals::WINDOW_HEIGHT = 600;
-int Globals::vsync_enabled = 0;
-bool Globals::FULL_SCREEN = false;
+
 
 bool initWindow(HINSTANCE hInstance, int showWnd) {
 

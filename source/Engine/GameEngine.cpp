@@ -23,7 +23,7 @@ GameEngine::~GameEngine() {
 	game.reset();
 	if (audioEngine != NULL)
 		audioEngine->Suspend();
-	
+
 }
 
 
@@ -80,6 +80,12 @@ void GameEngine::reloadGraphicsAssets() {
 	errorDialog->reloadGraphicsAsset();
 	warningDialog->reloadGraphicsAsset();
 	game->reloadGraphicsAssets();
+}
+
+void GameEngine::setChangeDisplaySettings(DisplayChangeType type, size_t variable) {
+	changeDisplay = true;
+	changeType = type;
+	changeVariable = variable;
 }
 
 
@@ -159,6 +165,26 @@ void GameEngine::run(double deltaTime) {
 
 	update(deltaTime);
 	render();
+
+	if (changeDisplay) {
+		switch (changeType) {
+			case DisplayChangeType::FULL_SCREEN:
+				setFullScreen(changeVariable);
+				mouse->resetPressed();
+				break;
+			case DisplayChangeType::DISPLAY_MODE:
+				changeDisplayMode(changeVariable);
+				break;
+			case DisplayChangeType::DISPLAY_ADAPTER:
+				setAdapter(changeVariable);
+				game->refreshDisplayModeList();
+				break;
+		}
+		changeDisplay = false;
+
+		//OutputDebugString(L"Done\n");
+	}
+
 	if (!audioEngine->IsAudioDevicePresent() && !warningCanceled) {
 		// no audio device found. Operating in silent mode.
 		showWarningDialog(L"No audio device found. Operating in Silent Mode.\nEnd Message...",

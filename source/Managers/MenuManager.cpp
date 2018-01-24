@@ -52,7 +52,6 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device) {
 		if (activeSlots.size() > 0) {
 			stick = activeSlots[0]->getStick();
 		}
-		exitDialog->setSelectorManager(stick, keys.get());
 
 		exitDialog->setOpenTransition(
 			//new TransitionEffects::SpinGrowTransition(exitDialog.get(), .5));
@@ -123,7 +122,7 @@ void MenuManager::update(double deltaTime) {
 				if (activeSlots.size() > 0) {
 					stick = activeSlots[0]->getStick();
 				}
-				exitDialog->setSelectorManager(stick, keys.get());
+				//exitDialog->setSelectorManager(stick, keys.get());
 				exitDialog->show();
 			}
 		}
@@ -176,6 +175,14 @@ void MenuManager::openConfigMenu() {
 	// switch screens at next frame
 	switchTo = configScreen.get();
 	transitionManager->transitionBetween(currentScreen, switchTo);
+}
+
+void MenuManager::refreshDisplayModeList() {
+	configScreen->populateDisplayList(game->getDisplayList());
+	configScreen->populateDisplayModeList(
+		game->getDisplayModeList(game->getSelectedDisplayIndex()));
+
+	
 }
 
 void MenuManager::confirmExit() {
@@ -432,6 +439,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device) {
 	controlPos.y += 50;
 
 	testSpinner = guiFactory->createSpinner(controlPos, 25, itemHeight);
+	
 	vector<wstring> items;
 	for (const auto& playerSlot : waitingSlots) {
 		wostringstream wss;
@@ -441,10 +449,14 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device) {
 
 	testSpinner->addItems(items);
 	guiControls.push_back(testSpinner);
+	controlPos.x += testSpinner->getWidth() + 25;
 
+	spinnerLabel = guiFactory->createTextLabel(controlPos, L"Controllers Found");
+	guiControls.push_back(spinnerLabel);
+	
 
 	 //Setup display mode combobox
-	controlPos.x += displayListbox->getWidth() + MARGIN * 2;
+	controlPos.x = displayListbox->getPosition().x + displayListbox->getWidth() + MARGIN * 2;
 	controlPos.y = 50;
 	 //custom scrollbar for combo list
 	ScrollBarDesc scrollBarDesc;
@@ -556,6 +568,10 @@ void ConfigScreen::newController(shared_ptr<Joystick> newStick) {
 	wss << "Socket: " << newStick->getControllerSockerNumber();
 	wss << " Player: " << newStick->getPlayerSlotNumber();
 	testSpinner->addItem(wss.str());
+
+	Vector2 newPos(testSpinner->getPosition());
+	newPos.x += testSpinner->getWidth() + 25;
+	spinnerLabel->setPosition(newPos);
 }
 
 
@@ -587,6 +603,7 @@ void ConfigScreen::populateDisplayModeList(vector<DXGI_MODE_DESC> displayModes) 
 
 	displayModeItems.clear();
 
+	//adapterLabel->setText(listbox->getSelected()->toString());
 }
 
 
@@ -638,11 +655,11 @@ void OnClickListenerAdapterList::onClick(ListBox* listbox, UINT selectedIndex) {
 
 	AdapterItem* selectedItem = (AdapterItem*) listbox->getItem(selectedIndex);
 	if (config->game->setAdapter(selectedIndex)) {
-		config->populateDisplayList(config->game->getDisplayList());
+		/*config->populateDisplayList(config->game->getDisplayList());
 		config->populateDisplayModeList(
 			config->game->getDisplayModeList(config->game->getSelectedDisplayIndex()));
 
-		config->adapterLabel->setText(listbox->getSelected()->toString());
+		config->adapterLabel->setText(listbox->getSelected()->toString());*/
 	}
 }
 

@@ -128,6 +128,7 @@ protected:
 	bool hasBeenSetUnpressed = false;
 	/** Flag to prevent continuous texture refresh. */
 	bool hasBeenSetHover = false;
+	bool hasBeenReset = true;
 };
 
 

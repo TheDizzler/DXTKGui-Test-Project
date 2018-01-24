@@ -1,8 +1,6 @@
 #pragma once
 
 #include "../DXTKGui/GUIFactory.h"
-//#include "../Engine/Joystick.h"
-
 #include "../globals.h"
 
 

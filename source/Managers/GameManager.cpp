@@ -117,20 +117,28 @@ vector<DXGI_MODE_DESC> GameManager::getDisplayModeList(ComPtr<IDXGIOutput> displ
 	return gameEngine->getDisplayModeList(display);
 }
 
+void GameManager::refreshDisplayModeList() {
+
+	menuScreen->refreshDisplayModeList();
+}
+
 //void GameManager::setDisplayMode(DXGI_MODE_DESC displayMode) {
 //	gameEngine->setDisplayMode(displayMode);
 //}
 
 bool GameManager::setAdapter(size_t adapterIndex) {
-	return gameEngine->setAdapter(adapterIndex);
+	gameEngine->setChangeDisplaySettings(DisplayChangeType::DISPLAY_ADAPTER, adapterIndex);
+	return true;
 }
 
 bool GameManager::setDisplayMode(size_t displayModeIndex) {
-	return gameEngine->changeDisplayMode(displayModeIndex);
+	gameEngine->setChangeDisplaySettings(DisplayChangeType::DISPLAY_MODE, displayModeIndex);
+	return true;
 }
 
 bool GameManager::setFullScreen(bool isFullScreen) {
-	return gameEngine->setFullScreen(isFullScreen);
+	gameEngine->setChangeDisplaySettings(DisplayChangeType::FULL_SCREEN, isFullScreen);
+	return true;
 }
 
 

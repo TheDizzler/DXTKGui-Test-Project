@@ -26,10 +26,12 @@ Email: tgillon.sdk@gmail.com
 	Start Win32 project
 		set to window application, empty project, no SDL
 
-	Install latest DirectXTK_desktop_2015 (2017.12.13.1 as of writing)
+	Install latest DirectXTK_desktop_2015 (2017.12.13.1 as of writing) 
+		NOT Directxtk12_desktop_2015!!!
 	Install pugixml							(1.8.5 as of writing)
 
 	Copy /source and /assets
+		OR add as remote repo
 	Copy X3DAudio.lib & XAPOFX.lib
 
 	Debug && x64
@@ -110,3 +112,5 @@ How to ScreenTransition:
 			
 
 	
+## Known issues:
+>- After transitioning to full screen mode the next mouse press (but not click!) is some how vaporized...

@@ -6,9 +6,6 @@ shared_ptr<Camera> camera;
 
 extern "C" {  _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001; }
 
-GraphicsEngine::GraphicsEngine() {
-}
-
 
 GraphicsEngine::~GraphicsEngine() {
 
@@ -239,17 +236,16 @@ void GraphicsEngine::initializeViewport() {
 
 void GraphicsEngine::setViewport(int xPos, int yPos, int width, int height) {
 
-	D3D11_VIEWPORT d3d_viewport;
-	ZeroMemory(&d3d_viewport, sizeof(D3D11_VIEWPORT));
+	ZeroMemory(&d3dViewport, sizeof(D3D11_VIEWPORT));
 
-	d3d_viewport.TopLeftX = xPos;
-	d3d_viewport.TopLeftY = yPos;
-	d3d_viewport.Width = width;
-	d3d_viewport.Height = height;
-	d3d_viewport.MinDepth = 0.0f;
-	d3d_viewport.MaxDepth = 1.0f;
+	d3dViewport.TopLeftX = xPos;
+	d3dViewport.TopLeftY = yPos;
+	d3dViewport.Width = width;
+	d3dViewport.Height = height;
+	d3dViewport.MinDepth = 0.0f;
+	d3dViewport.MaxDepth = 1.0f;
 
-	deviceContext->RSSetViewports(1, &d3d_viewport);
+	deviceContext->RSSetViewports(1, &d3dViewport);
 }
 
 
@@ -377,6 +373,9 @@ bool GraphicsEngine::setAdapter(size_t newAdapterIndex) {
 	swapChain.Reset();
 	debugDevice.Reset();
 	renderTargetView.Reset();
+	// release all references to back buffers
+	if (renderTargetView)
+		renderTargetView.Get()->Release();
 
 	delete batch.release();
 
@@ -449,8 +448,7 @@ bool GraphicsEngine::resizeSwapChain() {
 
 	// resize target
 	if (GameEngine::reportError(
-		swapChain->ResizeTarget(
-			&displayModeList[selectedDisplayModeIndex]),
+		swapChain->ResizeTarget(&displayModeList[selectedDisplayModeIndex]),
 		L"Failed to resize swapchain target", L"Display Mode Change Error"))
 		return false;
 
@@ -460,7 +458,8 @@ bool GraphicsEngine::resizeSwapChain() {
 		swapChain->ResizeBuffers(bufferCount,
 			displayModeList[selectedDisplayModeIndex].Width,
 			displayModeList[selectedDisplayModeIndex].Height,
-			displayModeList[selectedDisplayModeIndex].Format, swapChainFlags),
+			displayModeList[selectedDisplayModeIndex].Format, swapChainFlags
+			/*0,0,0, DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH*/),
 		L"Failed to resize swapchain buffers",
 		L"Display Mode Change Error"))
 		return false;
@@ -469,12 +468,13 @@ bool GraphicsEngine::resizeSwapChain() {
 	Globals::WINDOW_HEIGHT = displayModeList[selectedDisplayModeIndex].Height;
 
 
-
 	// destroy and recreate depth/stencil buffer if used (get width&height from backbuffer!)
 
 	// re-construct rendertarget
 	if (!initializeRenderTarget())
 		return false;
+
+
 	// re-construct the viewport
 	initializeViewport();
 

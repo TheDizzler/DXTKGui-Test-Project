@@ -155,6 +155,8 @@ public:
 	void openMainMenu();
 	void openConfigMenu();
 
+	void refreshDisplayModeList();
+
 	void confirmExit();
 
 private:
@@ -216,12 +218,14 @@ public:
 		PlayerSlotNumber slotNumber) override;
 	virtual void newController(shared_ptr<Joystick> newStick) override;
 
+	void populateDisplayList(vector<ComPtr<IDXGIOutput> > displays);
+	void populateDisplayModeList(vector<DXGI_MODE_DESC> displayModes);
+
 private:
 	unique_ptr<TexturePanel> texturePanel;
 	bool refreshTexture = true;
 
-	void populateDisplayList(vector<ComPtr<IDXGIOutput> > displays);
-	void populateDisplayModeList(vector<DXGI_MODE_DESC> displayModes);
+	
 	TextLabel* adapterLabel;
 	TextLabel* displayLabel;
 	TextLabel* testLabel;
@@ -232,6 +236,7 @@ private:
 	ComboBox* displayModeCombobox;
 	//ListBox* displayModeCombobox;
 	Spinner* testSpinner;
+	TextLabel* spinnerLabel;
 
 };
 

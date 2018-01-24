@@ -13,6 +13,11 @@
 extern unique_ptr<GUIFactory> guiFactory;
 
 
+enum DisplayChangeType {
+	FULL_SCREEN, DISPLAY_ADAPTER, DISPLAY_MODE
+};
+
+
 /** The engine to connect higher level game code to the low level
 	graphic and OS software. This class should be reusable for any 2D game,
 	thus should not contain any game logic. */
@@ -26,6 +31,7 @@ public:
 	void onAudioDeviceChange();
 
 	virtual void reloadGraphicsAssets() override;
+	void setChangeDisplaySettings(DisplayChangeType type, size_t variable);
 
 	void run(double time);
 
@@ -100,6 +106,9 @@ private:
 	bool initStage();
 	void initErrorDialogs();
 
+	bool changeDisplay = false;
+	DisplayChangeType changeType;
+	size_t changeVariable = 0;
 
 	HWND hwnd;
 	bool retryAudio;

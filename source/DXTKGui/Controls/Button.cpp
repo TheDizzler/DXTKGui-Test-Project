@@ -68,19 +68,19 @@ bool Button::updateSelect(double deltaTime) {
 
 	updateProjectedHitArea();
 	if (projectedHitArea.contains(mouse->getPosition())) {
-		lastWasHover = true;
+		//lastWasHover = true;
 		mouseHover = true;
 		if (!isPressed) {
 			if (!hasBeenSetHover) {
 				onHover();
 			}
 		}
-	} else if (lastWasHover) {
-		lastWasHover = false;
+	} else if (mouseHover/*lastWasHover*/) {
+		//lastWasHover = false;
 		mouseHover = false;
 	}
 
-	if (isPressed && !mouse->leftButton()) {
+	if (isPressed && mouse->clicked()) {
 		onClick();
 	} else {
 		isClicked = false;
@@ -112,26 +112,45 @@ bool Button::update(double deltaTime) {
 
 	updateProjectedHitArea();
 	if (projectedHitArea.contains(mouse->getPosition())) {
-		lastWasHover = true;
+		if (!mouseHover && isPressed) {
+			//OutputDebugString(L"Reentry!\n");
+			onHover();
+		}
 		mouseHover = true;
 		if (!isPressed) {
 			if (!hasBeenSetHover) {
 				onHover();
 			}
 		}
-	} else if (lastWasHover) {
-		lastWasHover = false;
+	} else if (mouseHover) {
 		isHover = false;
 		mouseHover = false;
+		//hasBeenReset = false;
+	} else if (!hasBeenReset && !isHover) {
+		//OutputDebugString(L"Reset STate!\n");
+		resetState();
+		hasBeenReset = true;
+	} else if (!mouse->leftButton()) {
+			isPressed = false;
 	}
 
-	if (isPressed && !mouse->leftButton()) {
+	if (isPressed && mouseHover && mouse->clicked()) {
 		onClick();
 	} else {
 		isClicked = false;
 		if (!isHover) {
 			if (!hasBeenSetUnpressed) {
-				resetState();
+				if (isPressed) {
+					//OutputDebugString(L"partial reset!\n");
+					isHover = false;
+					mouseHover = false;
+					setToUnpressedState();
+					hasBeenSetHover = false;
+					refreshTexture = true;
+				} else {
+					//resetState();
+					hasBeenReset = false;
+				}
 			}
 		} else if (mouseHover && mouse->pressed()) {
 			onPress();
