@@ -6,7 +6,7 @@
 #include <vector>
 #include <sstream>
 #include "../globals.h"
-#include "../DXTKGui/Controllers/Joystick.h"
+#include "../../DXTKGui/Controllers/Joystick.h"
 
 using namespace std;
 

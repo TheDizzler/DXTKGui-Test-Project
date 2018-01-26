@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../DXTKGui/GUIFactory.h"
-#include "../DXTKGUI/Effects/ScreenTransitions.h"
-#include "../DXTKGui/Controllers/Selector.h"
+#include "../../DXTKGui/GUIFactory.h"
+#include "../../DXTKGUI/Effects/ScreenTransitions.h"
+#include "../../DXTKGui/Controllers/Selector.h"
 
 class MenuScreen;
 class MainScreen;
@@ -169,7 +169,6 @@ private:
 	Vector2 position = Vector2::Zero;
 
 	GameManager* game;
-
 };
 
 

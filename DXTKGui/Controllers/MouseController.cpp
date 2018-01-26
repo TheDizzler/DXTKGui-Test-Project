@@ -1,18 +1,15 @@
 #include "MouseController.h"
 #include "../GUIFactory.h"
-#include <sstream>
+#include "../StringHelper.h"
 
-
-MouseController::MouseController(HWND h) {
-
-	hwnd = h;
-	//mouse.reset(new Mouse());
-	mouse.SetWindow(hwnd);
-	layerDepth = 1.0;
-
-}
 
 MouseController::~MouseController() {
+}
+
+void MouseController::initialize(HWND h) {
+	hwnd = h;
+	mouse.SetWindow(hwnd);
+	layerDepth = 1.0;
 }
 
 
@@ -27,7 +24,7 @@ bool MouseController::loadMouseIcon(GUIFactory* guiFactory,
 	if (mouseAsset == NULL) {
 		wostringstream ws;
 		ws << "Cannot find mouse sprite file: " << spriteName;
-		MessageBox(0, ws.str().c_str(), L"Critical failure", MB_OK);
+		StringHelper::reportError(ws.str().c_str(), L"Critical failure", false);
 
 		return false;
 	}
@@ -52,7 +49,7 @@ void MouseController::saveMouseState() {
 	// This is the absolute position of the mouse relative
 	// to the upper-left corner of the window
 
-	
+
 	isPressed = !lastState.leftButton && state.leftButton;
 	isClicked = lastState.leftButton && !state.leftButton;
 

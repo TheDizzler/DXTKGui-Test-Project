@@ -10,7 +10,7 @@
 
 #include "../Managers/GameManager.h"
 
-extern unique_ptr<GUIFactory> guiFactory;
+
 
 
 enum DisplayChangeType {
@@ -21,10 +21,9 @@ enum DisplayChangeType {
 /** The engine to connect higher level game code to the low level
 	graphic and OS software. This class should be reusable for any 2D game,
 	thus should not contain any game logic. */
-class GameEngine : public GraphicsEngine, public Input {
+class GameEngine : public Input, public GraphicsEngine {
 public:
 
-	GameEngine();
 	virtual ~GameEngine();
 
 	bool initEngine(HWND hwnd, HINSTANCE hInstance);
@@ -97,7 +96,7 @@ public:
 private:
 
 	unique_ptr<AudioEngine> audioEngine;
-	unique_ptr<GameManager> game;
+	GameManager game;
 
 	void update(double time);
 	virtual void render() override;

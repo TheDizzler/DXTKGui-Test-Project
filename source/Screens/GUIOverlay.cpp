@@ -1,14 +1,14 @@
 #include "../pch.h"
 #include "GUIOverlay.h"
 #include "../Engine/GameEngine.h"
-#include "../DXTKGui/StringHelper.h"
+#include "../../DXTKGui/StringHelper.h"
 
 const int TEXT_MARGIN = 5;
 const int TEST_BOX_MARGIN = 16;
 
-GUIOverlay::GUIOverlay() {
 
-	fpsLabel.reset(guiFactory->createTextLabel(Vector2(Globals::WINDOW_WIDTH - 250, 20),
+void GUIOverlay::initialize() {
+	fpsLabel.reset(guiFactory.createTextLabel(Vector2(Globals::WINDOW_WIDTH - 250, 20),
 		L"", "Default Font", true));
 	fpsLabel->setTint(Colors::Black);
 	fpsLabel->setScale(Vector2(.5, .5));

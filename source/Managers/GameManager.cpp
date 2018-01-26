@@ -1,28 +1,39 @@
+#include "../pch.h"
 #include "GameManager.h"
 #include "../Engine/GameEngine.h"
 
-unique_ptr<GUIOverlay> guiOverlay;
+GUIFactory guiFactory;
+GFXAssetManager assMan;
+GUIOverlay guiOverlay;
 
-
-GameManager::GameManager(GameEngine* gmngn) {
-
-	gameEngine = gmngn;
-}
 
 GameManager::~GameManager() {
-	mouse.reset();
 	menuScreen.reset();
 	currentScreen = NULL;
 }
 
 
-bool GameManager::initializeGame(HWND hwnd, ComPtr<ID3D11Device> dvc) {
+bool GameManager::initializeGame(GameEngine* gmngn, HWND hwnd, ComPtr<ID3D11Device> dvc) {
 
+	gameEngine = gmngn;
 	device = dvc;
 
+	// get graphical assets from xml file
+	if (!docAssMan.load_file("assets/AssetManifest.xml")) {
+		GameEngine::errorMessage(L"Could not read AssetManifest file!",
+			L"Fatal Read Error!");
+		return false;
+	}
 
-	guiOverlay = make_unique<GUIOverlay>();
+	xml_node gfxAssetNode = docAssMan.child("root").child("gfx");
 
+	if (!assMan.initialize(gfxAssetNode, device)) {
+		GameEngine::errorMessage(L"Failed to load GFX Assets!",
+			L"Fatal Error!");
+		return false;
+	}
+
+	guiOverlay.initialize();
 
 	menuScreen.reset(new MenuManager());
 	menuScreen->setGameManager(this);
@@ -37,22 +48,22 @@ bool GameManager::initializeGame(HWND hwnd, ComPtr<ID3D11Device> dvc) {
 }
 
 void GameManager::reloadGraphicsAssets() {
-	mouse->reloadGraphicsAsset(guiFactory.get());
+	mouse.reloadGraphicsAsset(&guiFactory);
 	menuScreen->reloadGraphicsAssets();
-	guiOverlay->reloadGraphicsAssets();
+	guiOverlay.reloadGraphicsAssets();
 }
 
 
 void GameManager::update(double deltaTime) {
 	currentScreen->update(deltaTime);
-	guiOverlay->update(deltaTime);
+	guiOverlay.update(deltaTime);
 }
 
 
 void GameManager::draw(SpriteBatch* batch) {
 
 	currentScreen->draw(batch);
-	guiOverlay->draw(batch);
+	guiOverlay.draw(batch);
 }
 
 

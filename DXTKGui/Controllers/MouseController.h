@@ -13,8 +13,10 @@ class GUIFactory;
 class MouseController : public Sprite {
 public:
 
-	MouseController(HWND hwnd);
+	//MouseController(HWND hwnd);
 	virtual ~MouseController();
+
+	void initialize(HWND hwnd);
 
 	/* MODE_ABSOLUTE (default) or MODE_RELATIVE (cannot handle relative mode yet). */
 	void setState(Mouse::Mode mode);

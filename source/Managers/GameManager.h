@@ -2,23 +2,27 @@
 
 
 #include "MenuManager.h"
-#include "../DXTKGui/GUIFactory.h"
+#include "../../DXTKGui/GUIFactory.h"
+#include "../../DXTKGui/Controllers/Joystick.h"
 #include "../Screens/GUIOverlay.h"
-#include "../DXTKGui/Controllers/Joystick.h"
+#include "GFXAssetManager.h"
+
 
 class GameEngine;
 
-extern unique_ptr<GUIOverlay> guiOverlay;
+extern GUIFactory guiFactory;
+extern GFXAssetManager assMan;
+extern GUIOverlay guiOverlay;
 
 /** The lowest level of class where game code should be included.
 	Everything below this (GameEngine downward) should generally go unmodified. */
 class GameManager {
 public:
-	GameManager(GameEngine* gameEngine);
+
 	virtual ~GameManager();
 
 
-	bool initializeGame(HWND hwnd, ComPtr<ID3D11Device> device);
+	bool initializeGame(GameEngine* gameEngine, HWND hwnd, ComPtr<ID3D11Device> device);
 
 	void reloadGraphicsAssets();
 
@@ -64,5 +68,6 @@ private:
 	GameEngine* gameEngine;
 	ComPtr<ID3D11Device> device;
 
+	pugi::xml_document docAssMan;
 
 };

@@ -2,13 +2,13 @@
 
 #include <list>
 
-#include "../DXTKGui/Controllers/MouseController.h"
-#include "../DXTKGui/Controllers/KeyboardController.h"
+#include "../../DXTKGui/Controllers/MouseController.h"
+#include "../../DXTKGui/Controllers/KeyboardController.h"
 #include "PlayerSlot.h"
 
 extern unique_ptr<PlayerSlotManager> slotManager;
-extern unique_ptr<KeyboardController> keys;
-extern unique_ptr<MouseController> mouse;
+extern KeyboardController keys;
+extern MouseController mouse;
 
 DWORD WINAPI waitForHUDThread(PVOID pVoid);
 DWORD WINAPI waitForPlayerThread(PVOID pVoid);

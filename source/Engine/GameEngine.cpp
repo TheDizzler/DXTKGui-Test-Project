@@ -1,26 +1,22 @@
+#include "../pch.h"
 #include "GameEngine.h"
 #include "CommonStates.h"
-#include "../DXTKGui/GuiAssets.h"
 
-unique_ptr<GUIFactory> guiFactory;
+
 
 unique_ptr<PromptDialog> GameEngine::errorDialog;
 unique_ptr<PromptDialog> GameEngine::warningDialog;
 Dialog* GameEngine::showDialog = NULL;
 
-GameEngine::GameEngine() {
-}
 
 
 GameEngine::~GameEngine() {
 
-	delete blendState;
-	guiFactory.reset();
+	if (blendState)
+		delete blendState;
 	errorDialog.reset();
 	warningDialog.reset();
 	showDialog = NULL;
-	mouse.reset();
-	game.reset();
 	if (audioEngine != NULL)
 		audioEngine->Suspend();
 
@@ -75,11 +71,11 @@ void GameEngine::onAudioDeviceChange() {
 }
 
 void GameEngine::reloadGraphicsAssets() {
-	guiFactory->reInitDevice(device, deviceContext, batch.get());
+	guiFactory.reInitDevice(device, deviceContext, batch.get());
 	blendState = new CommonStates(device.Get());
 	errorDialog->reloadGraphicsAsset();
 	warningDialog->reloadGraphicsAsset();
-	game->reloadGraphicsAssets();
+	game.reloadGraphicsAssets();
 }
 
 void GameEngine::setChangeDisplaySettings(DisplayChangeType type, size_t variable) {
@@ -92,23 +88,23 @@ void GameEngine::setChangeDisplaySettings(DisplayChangeType type, size_t variabl
 bool GameEngine::initGFXAssets() {
 
 	// get graphical assets from xml file
-	docAssMan.reset(new pugi::xml_document());
+	/*docAssMan.reset(new pugi::xml_document());
 	if (!docAssMan->load_file(GUIAssets::assetManifestFile)) {
 		GameEngine::errorMessage(L"Could not read AssetManifest file!",
 			L"Fatal Read Error!");
 		return false;
-	}
+	}*/
 
-	xml_node guiAssetsNode = docAssMan->child("root").child("gui");
-	guiFactory = make_unique<GUIFactory>(hwnd, guiAssetsNode);
-	if (!guiFactory->initialize(device, deviceContext,
-		swapChain, batch.get(), mouse.get())) {
+	//xml_node guiAssetsNode = docAssMan->child("root").child("gui");
+	//guiFactory = make_unique<GUIFactory>(hwnd, guiAssetsNode);
+	if (!guiFactory.initialize(hwnd, device, deviceContext,
+		swapChain, batch.get(), &mouse)) {
 
 		GameEngine::errorMessage(L"Failed to load GUIFactory", L"Fatal Error");
 		return false;
 	}
 
-	mouse->loadMouseIcon(guiFactory.get(), "Mouse Arrow");
+	mouse.loadMouseIcon(&guiFactory, "Mouse Arrow");
 	blendState = new CommonStates(device.Get());
 
 	return true;
@@ -116,8 +112,7 @@ bool GameEngine::initGFXAssets() {
 
 bool GameEngine::initStage() {
 
-	game.reset(new GameManager(this));
-	if (!game->initializeGame(hwnd, device)) {
+	if (!game.initializeGame(this, hwnd, device)) {
 		GameEngine::errorMessage(L"Game Manager failed to load.", L"Critical Failure");
 		return false;
 	}
@@ -131,10 +126,10 @@ void GameEngine::initErrorDialogs() {
 	dialogPos = dialogSize;
 	dialogPos.x -= dialogSize.x / 2;
 	dialogPos.y -= dialogSize.y / 2;
-	errorDialog.reset(guiFactory->createDialog(dialogSize, dialogPos, false, true, 5));
+	errorDialog.reset(guiFactory.createDialog(dialogSize, dialogPos, false, true, 5));
 	errorDialog->setTint(Color(0, 120, 207));
 	unique_ptr<Button> quitButton;
-	quitButton.reset(guiFactory->createButton());
+	quitButton.reset(guiFactory.createButton());
 	quitButton->setText(L"Exit Program");
 	quitButton->setActionListener(new QuitButtonListener(this));
 	//quitButton->setMatrixFunction([&]()-> Matrix { return camera->translationMatrix(); });
@@ -145,13 +140,13 @@ void GameEngine::initErrorDialogs() {
 	scrollBarDesc.upPressedButtonImage = "ScrollBar Up Pressed Custom";
 	scrollBarDesc.trackImage = "ScrollBar Track Custom";
 	scrollBarDesc.scrubberImage = "Scrubber Custom";
-	warningDialog.reset(guiFactory->createDialog(dialogPos, dialogSize, false, true, 3));
+	warningDialog.reset(guiFactory.createDialog(dialogPos, dialogSize, false, true, 3));
 	warningDialog->setScrollBar(scrollBarDesc);
 	//warningDialog->setMatrixFunction([&]()-> Matrix { return camera->translationMatrix(); });
 	warningDialog->setTint(Color(0, 120, 207));
 	warningDialog->setCancelButton(L"Continue");
 	unique_ptr<Button> quitButton2;
-	quitButton2.reset(guiFactory->createButton());
+	quitButton2.reset(guiFactory.createButton());
 	quitButton2->setText(L"Exit Program");
 	quitButton2->setActionListener(new QuitButtonListener(this));
 	warningDialog->setConfirmButton(move(quitButton2));
@@ -170,14 +165,14 @@ void GameEngine::run(double deltaTime) {
 		switch (changeType) {
 			case DisplayChangeType::FULL_SCREEN:
 				setFullScreen(changeVariable);
-				mouse->resetPressed();
+				mouse.resetPressed();
 				break;
 			case DisplayChangeType::DISPLAY_MODE:
 				changeDisplayMode(changeVariable);
 				break;
 			case DisplayChangeType::DISPLAY_ADAPTER:
 				setAdapter(changeVariable);
-				game->refreshDisplayModeList();
+				game.refreshDisplayModeList();
 				break;
 		}
 		changeDisplay = false;
@@ -207,14 +202,14 @@ void GameEngine::run(double deltaTime) {
 
 void GameEngine::update(double deltaTime) {
 
-	mouse->saveMouseState();
-	keys->saveKeyState();
+	mouse.saveMouseState();
+	keys.saveKeyState();
 	slotManager->updateGamePads();
 
 	if (showDialog->isOpen())
 		showDialog->update(deltaTime);
 	else
-		game->update(deltaTime);
+		game.update(deltaTime);
 
 }
 
@@ -225,9 +220,9 @@ void GameEngine::render() {
 	deviceContext->ClearRenderTargetView(renderTargetView.Get(), Colors::PeachPuff);
 	batch->Begin(SpriteSortMode_FrontToBack, blendState->NonPremultiplied());
 	{
-		game->draw(batch.get());
+		game.draw(batch.get());
 		showDialog->draw(batch.get());
-		mouse->draw(batch.get());
+		mouse.draw(batch.get());
 	}
 	batch->End();
 
@@ -238,8 +233,7 @@ void GameEngine::render() {
 void GameEngine::suspend() {
 
 	stopFullScreen();
-	if (game != NULL)
-		game->pause();
+	game.pause();
 	if (audioEngine != NULL)
 		audioEngine->Suspend();
 }
@@ -260,10 +254,10 @@ void GameEngine::exit() {
 void GameEngine::controllerRemoved(ControllerSocketNumber controllerSocket,
 	PlayerSlotNumber slotNumber) {
 
-	game->controllerRemoved(controllerSocket, slotNumber);
+	game.controllerRemoved(controllerSocket, slotNumber);
 }
 
 void GameEngine::newController(shared_ptr<Joystick> newStick) {
 
-	game->newController(newStick);
+	game.newController(newStick);
 }

@@ -623,7 +623,7 @@ void ImageButton::setToSelectedState() {
 
 /** ***** Animated Button ***** **/
 AnimatedButton::AnimatedButton(GUIFactory* factory, MouseController* mouseController,
-	shared_ptr<Animation> anim, Vector2 pos) : Selectable(factory, mouseController) {
+	Animation* anim, Vector2 pos) : Selectable(factory, mouseController) {
 
 	animation = anim;
 
@@ -643,7 +643,6 @@ AnimatedButton::~AnimatedButton() {
 
 void AnimatedButton::reloadGraphicsAsset() {
 	string name = animation->animationName;
-	animation.reset();
 	animation = guiFactory->getAnimation(name.c_str());
 }
 
