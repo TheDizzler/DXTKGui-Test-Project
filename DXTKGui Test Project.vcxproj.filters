@@ -17,6 +17,8 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="README.md" />
+    <None Include="DXTKGui\LICENSE" />
+    <None Include="DXTKGui\README.md" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Engine\Camera.cpp">
@@ -49,6 +51,9 @@
     <ClCompile Include="source\pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\Managers\GFXAssetManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="DXTKGui\BaseGraphics\FontSet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -61,19 +66,16 @@
     <ClCompile Include="DXTKGui\BaseGraphics\Sprite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DXTKGui\GUIFactory.cpp">
+    <ClCompile Include="DXTKGui\Controllers\Joystick.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DXTKGui\Effects\TransitionEffects.cpp">
+    <ClCompile Include="DXTKGui\Controllers\KeyboardController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DXTKGui\Effects\GfxAssetCombiner.cpp">
+    <ClCompile Include="DXTKGui\Controllers\MouseController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DXTKGui\Effects\LetterJammer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DXTKGui\Effects\ScreenTransitions.cpp">
+    <ClCompile Include="DXTKGui\Controllers\Selector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DXTKGui\Controls\Button.cpp">
@@ -112,19 +114,19 @@
     <ClCompile Include="DXTKGui\Controls\TexturePanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DXTKGui\Controllers\Joystick.cpp">
+    <ClCompile Include="DXTKGui\Effects\GfxAssetCombiner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DXTKGui\Controllers\KeyboardController.cpp">
+    <ClCompile Include="DXTKGui\Effects\LetterJammer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DXTKGui\Controllers\MouseController.cpp">
+    <ClCompile Include="DXTKGui\Effects\ScreenTransitions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DXTKGui\Controllers\Selector.cpp">
+    <ClCompile Include="DXTKGui\Effects\TransitionEffects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Managers\GFXAssetManager.cpp">
+    <ClCompile Include="DXTKGui\GUIFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -159,6 +161,9 @@
     <ClInclude Include="source\pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\Managers\GFXAssetManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="DXTKGui\BaseGraphics\FontSet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -177,28 +182,16 @@
     <ClInclude Include="DXTKGui\BaseGraphics\Sprite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DXTKGui\GuiAssets.h">
+    <ClInclude Include="DXTKGui\Controllers\Joystick.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DXTKGui\GUIFactory.h">
+    <ClInclude Include="DXTKGui\Controllers\KeyboardController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DXTKGui\StringHelper.h">
+    <ClInclude Include="DXTKGui\Controllers\MouseController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DXTKGui\Effects\TransitionEffects.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DXTKGui\Effects\GfxAssetCombiner.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DXTKGui\Effects\LetterJammer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DXTKGui\Effects\ScreenTransitions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DXTKGui\Controls\TexturePanel.h">
+    <ClInclude Include="DXTKGui\Controllers\Selector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DXTKGui\Controls\Button.h">
@@ -234,24 +227,33 @@
     <ClInclude Include="DXTKGui\Controls\TextLabel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DXTKGui\Controllers\Selector.h">
+    <ClInclude Include="DXTKGui\Controls\TexturePanel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DXTKGui\Controllers\Joystick.h">
+    <ClInclude Include="DXTKGui\Effects\GfxAssetCombiner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DXTKGui\Controllers\KeyboardController.h">
+    <ClInclude Include="DXTKGui\Effects\LetterJammer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DXTKGui\Controllers\MouseController.h">
+    <ClInclude Include="DXTKGui\Effects\ScreenTransitions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\Managers\GFXAssetManager.h">
+    <ClInclude Include="DXTKGui\Effects\TransitionEffects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DXTKGui\GuiAssets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DXTKGui\GUIFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DXTKGui\StringHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="DXTKGui\assets\DXTKGuiManifest.xml" />
     <Xml Include="assets\AssetManifest.xml" />
+    <Xml Include="DXTKGui\assets\DXTKGuiManifest.xml" />
   </ItemGroup>
 </Project>
