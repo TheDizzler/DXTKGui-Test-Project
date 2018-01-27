@@ -114,4 +114,5 @@ How to ScreenTransition:
 	
 ## Known issues:
 >- After transitioning to full screen mode the next mouse press (but not click!) is some how vaporized...
->- One remaining refcount on "default gui spritesheet.dds" is from the mouse which will not get destroyed until after GameEngine, so it should be fine.
+>- One remaining refcount on "default gui spritesheet.dds" is from the mouse which will get destroyed after GameEngine, so it should be fine.
+>- Text on combolist gets funky after screen resizing
