@@ -8,7 +8,7 @@ MouseController mouse;
 
 bool endAllThreadsNow = false;
 bool slotManagerThreadRunning = false;
-bool Input::gameInitialized = false;
+bool ControllerListener::gameInitialized = false;
 
 Input::Input() {
 

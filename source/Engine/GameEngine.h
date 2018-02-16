@@ -70,27 +70,15 @@ public:
 	static void errorMessage(wstring message, wstring title = L"Fatal Error",
 		bool showMessageBox = false) {
 
-		message += L"\n";
-		if (!Globals::FULL_SCREEN && showMessageBox)
-			MessageBox(NULL, message.c_str(), title.c_str(), MB_OK | MB_ICONERROR);
-
-		title += L" >> " + message;
-		OutputDebugString(title.c_str()); // always output debug just in case
+		GameManager::errorMessage(message, title, showMessageBox);
 	}
 
 	static void showErrorDialog(wstring message, wstring title) {
-		errorDialog->show();
-		errorDialog->setTitle(title);
-		errorDialog->setText(message);
-		showDialog = errorDialog.get();
+		GameManager::showErrorDialog(message, title);
 	}
 
 	static void showWarningDialog(wstring message, wstring title) {
-		warningDialog->show();
-		warningDialog->setTitle(title);
-		warningDialog->setText(message);
-		warningDialog->setTextTint(Color(1, 0, 0, 1));
-		showDialog = warningDialog.get();
+		GameManager::showWarningDialog(message, title);
 	}
 
 private:
@@ -101,9 +89,6 @@ private:
 	void update(double time);
 	virtual void render() override;
 
-	bool initGFXAssets();
-	bool initStage();
-	void initErrorDialogs();
 
 	bool changeDisplay = false;
 	DisplayChangeType changeType;
@@ -111,32 +96,4 @@ private:
 
 	bool retryAudio;
 
-	unique_ptr<pugi::xml_document> docAssMan;
-
-
-	/* Critical error dialog. Exits game when dismissed. */
-	static unique_ptr<PromptDialog> errorDialog;
-	/* Minor error dialog. Choice between exit game and continue. */
-	static unique_ptr<PromptDialog> warningDialog;
-	static Dialog* showDialog;
-
-	CommonStates* blendState;
-};
-
-
-class QuitButtonListener : public Button::ActionListener {
-public:
-	QuitButtonListener(GameEngine* eng) : engine(eng) {
-	}
-	virtual void onClick(Button* button) override {
-		engine->exit();
-	}
-	virtual void onPress(Button* button) override {
-	}
-	virtual void onHover(Button* button) override {
-	}
-	virtual void resetState(Button* button) override {
-	}
-
-	GameEngine* engine;
 };

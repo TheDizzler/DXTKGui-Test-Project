@@ -256,4 +256,7 @@
     <Xml Include="assets\AssetManifest.xml" />
     <Xml Include="DXTKGui\assets\DXTKGuiManifest.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="DXTKGui\assets\GUI\button down (256x64).dds" />
+  </ItemGroup>
 </Project>

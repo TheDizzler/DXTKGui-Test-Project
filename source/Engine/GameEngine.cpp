@@ -3,20 +3,9 @@
 #include "CommonStates.h"
 
 
-
-unique_ptr<PromptDialog> GameEngine::errorDialog;
-unique_ptr<PromptDialog> GameEngine::warningDialog;
-Dialog* GameEngine::showDialog = NULL;
-
-
-
 GameEngine::~GameEngine() {
 
-	if (blendState)
-		delete blendState;
-	errorDialog.reset();
-	warningDialog.reset();
-	showDialog = NULL;
+	
 	if (audioEngine != NULL)
 		audioEngine->Suspend();
 
@@ -48,17 +37,11 @@ bool GameEngine::initEngine(HWND hw, HINSTANCE hInstance) {
 		// no audio device found. Operating in silent mode.
 	}
 
-	if (!initGFXAssets()) {
-		GameEngine::errorMessage(L"GFX Assets Initialization Failed");
+	if (!game.initializeGame(this, hwnd, device)) {
+		GameEngine::errorMessage(L"Game Manager failed to load.", L"Critical Failure");
 		return false;
 	}
 
-	initErrorDialogs();
-
-	if (!initStage()) {
-		GameEngine::errorMessage(L"Stage Initialization Failed");
-		return false;
-	}
 
 	gameInitialized = true;
 	return true;
@@ -70,9 +53,6 @@ void GameEngine::onAudioDeviceChange() {
 
 void GameEngine::reloadGraphicsAssets() {
 	guiFactory.reInitDevice(device, deviceContext, batch.get());
-	blendState = new CommonStates(device.Get());
-	errorDialog->reloadGraphicsAsset();
-	warningDialog->reloadGraphicsAsset();
 	game.reloadGraphicsAssets();
 }
 
@@ -82,75 +62,6 @@ void GameEngine::setChangeDisplaySettings(DisplayChangeType type, size_t variabl
 	changeVariable = variable;
 }
 
-
-bool GameEngine::initGFXAssets() {
-
-	// get graphical assets from xml file
-	/*docAssMan.reset(new pugi::xml_document());
-	if (!docAssMan->load_file(GUIAssets::assetManifestFile)) {
-		GameEngine::errorMessage(L"Could not read AssetManifest file!",
-			L"Fatal Read Error!");
-		return false;
-	}*/
-
-	//xml_node guiAssetsNode = docAssMan->child("root").child("gui");
-	//guiFactory = make_unique<GUIFactory>(hwnd, guiAssetsNode);
-	if (!guiFactory.initialize(hwnd, device, deviceContext,
-		swapChain, batch.get(), &mouse)) {
-
-		GameEngine::errorMessage(L"Failed to load GUIFactory", L"Fatal Error");
-		return false;
-	}
-
-	mouse.loadMouseIcon(&guiFactory, "Mouse Arrow");
-	blendState = new CommonStates(device.Get());
-
-	return true;
-}
-
-bool GameEngine::initStage() {
-
-	if (!game.initializeGame(this, hwnd, device)) {
-		GameEngine::errorMessage(L"Game Manager failed to load.", L"Critical Failure");
-		return false;
-	}
-	return true;
-}
-
-void GameEngine::initErrorDialogs() {
-
-	Vector2 dialogPos, dialogSize;
-	dialogSize = Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2);
-	dialogPos = dialogSize;
-	dialogPos.x -= dialogSize.x / 2;
-	dialogPos.y -= dialogSize.y / 2;
-	errorDialog.reset(guiFactory.createDialog(dialogSize, dialogPos, false, true, 5));
-	errorDialog->setTint(Color(0, 120, 207));
-	unique_ptr<Button> quitButton;
-	quitButton.reset(guiFactory.createButton());
-	quitButton->setText(L"Exit Program");
-	quitButton->setActionListener(new QuitButtonListener(this));
-	//quitButton->setMatrixFunction([&]()-> Matrix { return camera->translationMatrix(); });
-	errorDialog->setCancelButton(move(quitButton));
-
-	ScrollBarDesc scrollBarDesc;
-	scrollBarDesc.upButtonImage = "ScrollBar Up Custom";
-	scrollBarDesc.upPressedButtonImage = "ScrollBar Up Pressed Custom";
-	scrollBarDesc.trackImage = "ScrollBar Track Custom";
-	scrollBarDesc.scrubberImage = "Scrubber Custom";
-	warningDialog.reset(guiFactory.createDialog(dialogPos, dialogSize, false, true, 3));
-	warningDialog->setScrollBar(scrollBarDesc);
-	//warningDialog->setMatrixFunction([&]()-> Matrix { return camera->translationMatrix(); });
-	warningDialog->setTint(Color(0, 120, 207));
-	warningDialog->setCancelButton(L"Continue");
-	unique_ptr<Button> quitButton2;
-	quitButton2.reset(guiFactory.createButton());
-	quitButton2->setText(L"Exit Program");
-	quitButton2->setActionListener(new QuitButtonListener(this));
-	warningDialog->setConfirmButton(move(quitButton2));
-
-	showDialog = warningDialog.get();
-}
 
 
 bool warningCanceled = false;
@@ -204,11 +115,7 @@ void GameEngine::update(double deltaTime) {
 	keys.saveKeyState();
 	slotManager->updateGamePads();
 
-	if (showDialog->isOpen())
-		showDialog->update(deltaTime);
-	else
-		game.update(deltaTime);
-
+	game.update(deltaTime);
 }
 
 
@@ -216,15 +123,7 @@ void GameEngine::update(double deltaTime) {
 void GameEngine::render() {
 
 	deviceContext->ClearRenderTargetView(renderTargetView.Get(), Colors::PeachPuff);
-	batch->Begin(SpriteSortMode_FrontToBack, blendState->NonPremultiplied());
-	{
-		game.draw(batch.get());
-		showDialog->draw(batch.get());
-		mouse.draw(batch.get());
-	}
-	batch->End();
-
-
+	game.draw(batch.get());
 	swapChain->Present(0, 0);
 }
 

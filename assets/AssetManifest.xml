@@ -13,7 +13,7 @@
 	</gfx>
 
 
-	<gui dir="gui/">
+	<gui dir="customGUI/">
 
 		<sprite name="Button Up" file="button up (256x64).dds" />
 		<sprite name="Button Down" file="button down (256x64).dds" />
