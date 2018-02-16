@@ -32,6 +32,36 @@ void Camera::updateViewport(const Vector2& viewport, const Vector2& viewportPos,
 
 }
 
+bool Camera::viewContains(const Vector2& point) {
+	RECT* rect = viewportWorldBoundary();
+
+	bool contains = rect->left < point.x && point.x < rect->right
+		&& rect->top < point.y && point.y < rect->bottom;
+	delete rect;
+	return contains;
+}
+
+float Camera::getZoom() {
+	return zoom;
+}
+
+void Camera::setZoomToResolution(int width, int height) {
+	float xZoom = Globals::WINDOW_WIDTH / width;
+	float yZoom = Globals::WINDOW_HEIGHT / height;
+
+	if (xZoom < yZoom)
+		zoom = xZoom;
+	else
+		zoom = yZoom;
+}
+
+void Camera::setZoom(float zoomTo) {
+	zoom = zoomTo;
+	if (zoom < 0.2f)
+		zoom = 0.2f;
+	else if (zoom > 2.5f)
+		zoom = 2.5;
+}
 
 void Camera::adjustZoom(float amount) {
 

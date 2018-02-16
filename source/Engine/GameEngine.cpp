@@ -25,9 +25,7 @@ GameEngine::~GameEngine() {
 
 bool GameEngine::initEngine(HWND hw, HINSTANCE hInstance) {
 
-	hwnd = hw;
-
-	if (!initD3D(hwnd)) {
+	if (!initD3D(hw)) {
 		GameEngine::errorMessage(L"Direct3D Initialization Failed", L"Error");
 		return false;
 	}

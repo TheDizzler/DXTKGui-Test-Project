@@ -109,7 +109,6 @@ private:
 	DisplayChangeType changeType;
 	size_t changeVariable = 0;
 
-	HWND hwnd;
 	bool retryAudio;
 
 	unique_ptr<pugi::xml_document> docAssMan;

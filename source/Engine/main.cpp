@@ -2,16 +2,18 @@
 #pragma once
 
 #include "GameEngine.h"
+#include <fstream>
 
 
-
-LPCTSTR wndClassName = L"DXTKGui Test Utility";
+LPCTSTR wndClassName = L"Tender Torrent";
 HWND hwnd;
 
-int Globals::WINDOW_WIDTH = 1280;
-int Globals::WINDOW_HEIGHT = 960;
+
+int Globals::WINDOW_WIDTH = 800;
+int Globals::WINDOW_HEIGHT = 600;
 int Globals::vsync_enabled = 0;
 bool Globals::FULL_SCREEN = false;
+
 
 GameEngine gameEngine;
 HDEVNOTIFY newInterface = NULL;
@@ -26,7 +28,7 @@ __int64 counterStart = 0;
 int registerControllers();
 /** Creates a list of all attached USB devices. */
 int getInputDeviceInfo(bool writeToFile, wstring filename = L"USB Devices.txt");
-int messageLoop();
+WPARAM messageLoop();
 void startTimer();
 double getSecondsSinceStart();
 double getFrameTime();
@@ -67,6 +69,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	guidHid.Data4[6] = 0x00;
 	guidHid.Data4[7] = 0x30;
 
+
 	if (!initWindow(hInstance, nShowCmd)) {
 		MessageBox(0, L"Window Initialization - Failed", L"Error", MB_OK);
 		releaseResources();
@@ -96,11 +99,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	messageLoop(); /* Main program loop */
 	releaseResources();
 
+
 	return 0;
 }
 
 
-int messageLoop() {
+WPARAM messageLoop() {
 
 	MSG msg;
 	ZeroMemory(&msg, sizeof(msg));
@@ -125,7 +129,6 @@ int messageLoop() {
 }
 
 
-
 bool initWindow(HINSTANCE hInstance, int showWnd) {
 
 
@@ -145,7 +148,6 @@ bool initWindow(HINSTANCE hInstance, int showWnd) {
 	wc.hIconSm = LoadIcon(NULL, IDI_WINLOGO);	// taskbar icon
 
 	if (!RegisterClassEx(&wc)) {
-
 		MessageBox(NULL, L"Error registering class", L"Error", MB_OK | MB_ICONERROR);
 		return false;
 	}
@@ -180,7 +182,6 @@ bool initWindow(HINSTANCE hInstance, int showWnd) {
 		NULL);					// used for MDI client window
 
 	if (!hwnd) {
-
 		MessageBox(NULL, L"Error creating window", L"Error", MB_OK | MB_ICONERROR);
 		return false;
 	}
@@ -420,7 +421,7 @@ int registerControllers() {
 	return 1;
 }
 
-#include <fstream>
+
 /* Finds and list all HID devices. For device finding, debugging, etc. */
 int getInputDeviceInfo(bool writeToFile, wstring filename) {
 
@@ -506,9 +507,6 @@ __int64 lastFrameStartTime = 0;
 void startTimer() {
 
 	LARGE_INTEGER frequencyCount;
-	/*QueryPerformanceFrequency(&frequencyCount);
-	countsPerSecond = double(frequencyCount.QuadPart);*/
-
 	QueryPerformanceCounter(&frequencyCount);
 	counterStart = frequencyCount.QuadPart;
 	lastFrameStartTime = frequencyCount.QuadPart;
@@ -531,9 +529,6 @@ double getFrameTime() {
 
 	tickCount = currentTime.QuadPart - lastFrameStartTime;
 	lastFrameStartTime = currentTime.QuadPart;
-
-	//if (tickCount < 0.0f) // why would this ever be negative?
-	//	tickCount = 0.0f;
 
 	return double(tickCount) / countsPerSecond;
 }

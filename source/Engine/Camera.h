@@ -29,7 +29,12 @@ public:
 	int viewportHeight;
 	Vector3 viewportCenter;
 
-
+	bool viewContains(const Vector2& point);
+	
+	float getZoom();
+	void setZoomToResolution(int width, int height);
+		
+	void setZoom(float zoomAmount);
 	void adjustZoom(float amount);
 	/** Move the camera in an X and Y amount based on the cameraMovement param.
 	*	If clampToMap is true the camera will try not to pan outside of the
