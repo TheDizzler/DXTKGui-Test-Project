@@ -6,7 +6,7 @@
 #include <vector>
 #include <sstream>
 #include "../globals.h"
-#include "../DXTKGui/Controllers/Joystick.h"
+#include "../../DXTKGui/Controllers/Joystick.h"
 
 using namespace std;
 
@@ -85,8 +85,8 @@ private:
 
 class ControllerListener;
 /** This class is used for passing awaiting joysticks around threads. */
-struct JoyData {
-
+class JoyData {
+public:
 	JoyData(shared_ptr<Joystick> joy, ControllerListener* conListener, bool waitForInpt)
 		: joystick(joy), listener(conListener), waitForInput(waitForInpt) {
 	}

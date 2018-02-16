@@ -23,7 +23,7 @@
 #include <Audio.h>
 #include <pugixml.hpp>
 
-#include "DXTKGui/GUIFactory.h"
+#include "../DXTKGui/GUIFactory.h"
 #include "Engine/Input.h"
 
 using namespace std;

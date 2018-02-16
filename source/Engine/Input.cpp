@@ -1,13 +1,14 @@
+#include "../pch.h"
 #include "Input.h"
 #include "../Engine/GameEngine.h"
 
 unique_ptr<PlayerSlotManager> slotManager;
-unique_ptr<KeyboardController> keys;
-unique_ptr<MouseController> mouse;
+KeyboardController keys;
+MouseController mouse;
 
 bool endAllThreadsNow = false;
 bool slotManagerThreadRunning = false;
-bool Input::gameInitialized = false;
+bool ControllerListener::gameInitialized = false;
 
 Input::Input() {
 
@@ -22,9 +23,7 @@ Input::~Input() {
 
 bool Input::initRawInput(HWND hwnd) {
 
-	keys = make_unique<KeyboardController>();
-	mouse = make_unique<MouseController>(hwnd);
-
+	mouse.initialize(hwnd);
 	return true;
 }
 

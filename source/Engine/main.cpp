@@ -1,20 +1,12 @@
+#include "../pch.h"
 #pragma once
-#define WIN32_LEAN_AND_MEAN
-
-#include <WinSDKVer.h>		// these are necessary for XAudio2.8
-#define _WIN32_WINNT 0x0602	// ^
-#include <SDKDDKVer.h>		// ^
-
-#include <Windows.h>
-#include <dbt.h>
-
-#include <guiddef.h>
-
-#include <Mmsystem.h>
-#include <Setupapi.h>
-
 
 #include "GameEngine.h"
+#include <fstream>
+
+
+LPCTSTR wndClassName = L"Tender Torrent";
+HWND hwnd;
 
 
 int Globals::WINDOW_WIDTH = 800;
@@ -22,10 +14,8 @@ int Globals::WINDOW_HEIGHT = 600;
 int Globals::vsync_enabled = 0;
 bool Globals::FULL_SCREEN = false;
 
-LPCTSTR wndClassName = L"DirectXTK GUI Demo";
-HWND hwnd;
 
-unique_ptr<GameEngine> gameEngine;
+GameEngine gameEngine;
 HDEVNOTIFY newInterface = NULL;
 
 GUID guidHid;
@@ -38,7 +28,7 @@ __int64 counterStart = 0;
 int registerControllers();
 /** Creates a list of all attached USB devices. */
 int getInputDeviceInfo(bool writeToFile, wstring filename = L"USB Devices.txt");
-int messageLoop();
+WPARAM messageLoop();
 void startTimer();
 double getSecondsSinceStart();
 double getFrameTime();
@@ -79,7 +69,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	guidHid.Data4[6] = 0x00;
 	guidHid.Data4[7] = 0x30;
 
-	gameEngine.reset(new GameEngine());
 
 	if (!initWindow(hInstance, nShowCmd)) {
 		MessageBox(0, L"Window Initialization - Failed", L"Error", MB_OK);
@@ -87,7 +76,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 0;
 	}
 
-	if (!gameEngine->initEngine(hwnd, hInstance)) {
+	if (!gameEngine.initEngine(hwnd, hInstance)) {
 		GameEngine::errorMessage(L"Game Engine Initialization Failed", L"Error", true);
 		releaseResources();
 		return 0;
@@ -115,7 +104,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 }
 
 
-int messageLoop() {
+WPARAM messageLoop() {
 
 	MSG msg;
 	ZeroMemory(&msg, sizeof(msg));
@@ -128,7 +117,8 @@ int messageLoop() {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		} else {	// game code
-			gameEngine->run(getFrameTime());
+
+			gameEngine.run(getFrameTime());
 
 		}
 
@@ -137,7 +127,6 @@ int messageLoop() {
 	return msg.wParam;
 
 }
-
 
 
 bool initWindow(HINSTANCE hInstance, int showWnd) {
@@ -159,7 +148,6 @@ bool initWindow(HINSTANCE hInstance, int showWnd) {
 	wc.hIconSm = LoadIcon(NULL, IDI_WINLOGO);	// taskbar icon
 
 	if (!RegisterClassEx(&wc)) {
-
 		MessageBox(NULL, L"Error registering class", L"Error", MB_OK | MB_ICONERROR);
 		return false;
 	}
@@ -194,7 +182,6 @@ bool initWindow(HINSTANCE hInstance, int showWnd) {
 		NULL);					// used for MDI client window
 
 	if (!hwnd) {
-
 		MessageBox(NULL, L"Error creating window", L"Error", MB_OK | MB_ICONERROR);
 		return false;
 	}
@@ -258,7 +245,7 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			GetRawInputData((HRAWINPUT) lParam, RID_INPUT,
 				pRawInput, &bufferSize, sizeof(RAWINPUTHEADER));
 			if (pRawInput->header.dwType == RIM_TYPEHID)
-				gameEngine->parseRawInput(pRawInput);
+				gameEngine.parseRawInput(pRawInput);
 
 			HeapFree(hHeap, 0, pRawInput);
 			/** Joystick end */
@@ -304,8 +291,8 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					{
 						if (deviceInterface->dbcc_classguid == KSCATEGORY_AUDIO) {
 							OutputDebugString(L"Audio interface added!\n");
-							if (gameEngine)
-								gameEngine->onAudioDeviceChange();
+							if (gameEngine.gameInitialized)
+								gameEngine.onAudioDeviceChange();
 							return 0;
 						}
 
@@ -339,16 +326,16 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		return 0;
 
 		case WM_NCLBUTTONDOWN:
-			gameEngine->suspend();
+			gameEngine.suspend();
 			break;
 		case WM_KILLFOCUS:
 			//OutputDebugString(L"Lost Focus\n");
-			gameEngine->suspend();
+			gameEngine.suspend();
 			return 0;
 
 		case WM_ACTIVATE:
 			//OutputDebugString(L"Got Focus\n");
-			gameEngine->resume();
+			gameEngine.resume();
 			return 0;
 
 		case WM_DESTROY:	// top right x button pressed or DestroyWindow(HWND) called
@@ -393,14 +380,14 @@ int registerControllers() {
 
 		if (GetRawInputDeviceInfo(pRawInputDeviceList[i].hDevice,
 			RIDI_DEVICENAME, tBuffer, &size) < 0) {
-				// Error in reading device name
+			// Error in reading device name
 			continue;
 		}
 
 		UINT cbSize = rdi.cbSize;
 		if (GetRawInputDeviceInfo(pRawInputDeviceList[i].hDevice,
 			RIDI_DEVICEINFO, &rdi, &cbSize) < 0) {
-				// Error in reading information
+			// Error in reading information
 			wostringstream wss;
 			wss << L"Device Name: " << tBuffer << "\n";
 			wss << "Error reading information" << endl;
@@ -427,14 +414,14 @@ int registerControllers() {
 		}
 	}
 
-	gameEngine->addJoysticks(controllerDevices);
+	gameEngine.addJoysticks(controllerDevices);
 
 
 	free(pRawInputDeviceList);
 	return 1;
 }
 
-#include <fstream>
+
 /* Finds and list all HID devices. For device finding, debugging, etc. */
 int getInputDeviceInfo(bool writeToFile, wstring filename) {
 
@@ -520,9 +507,6 @@ __int64 lastFrameStartTime = 0;
 void startTimer() {
 
 	LARGE_INTEGER frequencyCount;
-	/*QueryPerformanceFrequency(&frequencyCount);
-	countsPerSecond = double(frequencyCount.QuadPart);*/
-
 	QueryPerformanceCounter(&frequencyCount);
 	counterStart = frequencyCount.QuadPart;
 	lastFrameStartTime = frequencyCount.QuadPart;
@@ -545,9 +529,6 @@ double getFrameTime() {
 
 	tickCount = currentTime.QuadPart - lastFrameStartTime;
 	lastFrameStartTime = currentTime.QuadPart;
-
-	//if (tickCount < 0.0f) // why would this ever be negative?
-	//	tickCount = 0.0f;
 
 	return double(tickCount) / countsPerSecond;
 }

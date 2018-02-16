@@ -1,28 +1,61 @@
+#include "../pch.h"
 #include "GameManager.h"
 #include "../Engine/GameEngine.h"
 
-unique_ptr<GUIOverlay> guiOverlay;
+GUIFactory guiFactory;
+GFXAssetManager assMan;
+GUIOverlay guiOverlay;
 
 
-GameManager::GameManager(GameEngine* gmngn) {
+unique_ptr<PromptDialog> GameManager::errorDialog;
+unique_ptr<PromptDialog> GameManager::warningDialog;
+Dialog* GameManager::showDialog = NULL;
 
-	gameEngine = gmngn;
-}
 
 GameManager::~GameManager() {
-	mouse.reset();
+
+	if (blendState)
+		delete blendState;
+	showDialog = NULL;
 	menuScreen.reset();
 	currentScreen = NULL;
 }
 
 
-bool GameManager::initializeGame(HWND hwnd, ComPtr<ID3D11Device> dvc) {
+bool GameManager::initializeGame(GameEngine* gmngn, HWND hwnd, ComPtr<ID3D11Device> dvc) {
 
+	gameEngine = gmngn;
 	device = dvc;
 
+	// get graphical assets from xml file
+	if (!docAssMan.load_file("assets/AssetManifest.xml")) {
+		GameEngine::errorMessage(L"Could not read AssetManifest file!",
+			L"Fatal Read Error!", !Globals::FULL_SCREEN);
+		return false;
+	}
 
-	guiOverlay = make_unique<GUIOverlay>();
+	xml_node gfxAssetNode = docAssMan.child("root").child("gfx");
 
+	if (!assMan.initialize(gfxAssetNode, device)) {
+		GameEngine::errorMessage(L"Failed to load GFX Assets!",
+			L"Fatal Error!", !Globals::FULL_SCREEN);
+		return false;
+	}
+	if (!guiFactory.initialize(hwnd, device, gameEngine->getDeviceContext(),
+		gameEngine->getSwapChain(), gameEngine->getSpriteBatch(), &mouse,
+		"assets/AssetManifest.xml")) {
+
+		GameEngine::errorMessage(L"Failed to load GUIFactory",
+			L"Fatal Error", !Globals::FULL_SCREEN);
+		return false;
+	}
+
+	mouse.loadMouseIcon(&guiFactory, "Mouse Arrow");
+	blendState = new CommonStates(device.Get());
+
+	initErrorDialogs();
+
+	guiOverlay.initialize();
 
 	menuScreen.reset(new MenuManager());
 	menuScreen->setGameManager(this);
@@ -36,23 +69,74 @@ bool GameManager::initializeGame(HWND hwnd, ComPtr<ID3D11Device> dvc) {
 	return true;
 }
 
+
+void GameManager::initErrorDialogs() {
+	Vector2 dialogPos, dialogSize;
+	dialogSize = Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2);
+	dialogPos = dialogSize;
+	dialogPos.x -= dialogSize.x / 2;
+	dialogPos.y -= dialogSize.y / 2;
+	errorDialog.reset(guiFactory.createDialog(dialogSize, dialogPos, false, true, 5));
+	errorDialog->setTint(Color(0, 120, 207));
+	unique_ptr<Button> quitButton;
+	quitButton.reset(guiFactory.createButton());
+	quitButton->setText(L"Exit Program");
+	quitButton->setActionListener(new QuitButtonListener(this));
+	//quitButton->setMatrixFunction([&]()-> Matrix { return camera->translationMatrix(); });
+	errorDialog->setCancelButton(move(quitButton));
+
+	ScrollBarDesc scrollBarDesc;
+	scrollBarDesc.upButtonImage = "ScrollBar Up Custom";
+	scrollBarDesc.upPressedButtonImage = "ScrollBar Up Pressed Custom";
+	scrollBarDesc.trackImage = "ScrollBar Track Custom";
+	scrollBarDesc.scrubberImage = "Scrubber Custom";
+	warningDialog.reset(guiFactory.createDialog(dialogPos, dialogSize, false, true, 3));
+	warningDialog->setScrollBar(scrollBarDesc);
+	//warningDialog->setMatrixFunction([&]()-> Matrix { return camera->translationMatrix(); });
+	warningDialog->setTint(Color(0, 120, 207));
+	warningDialog->setCancelButton(L"Continue");
+	unique_ptr<Button> quitButton2;
+	quitButton2.reset(guiFactory.createButton());
+	quitButton2->setText(L"Exit Program");
+	quitButton2->setActionListener(new QuitButtonListener(this));
+	warningDialog->setConfirmButton(move(quitButton2));
+
+	showDialog = warningDialog.get();
+}
+
+
 void GameManager::reloadGraphicsAssets() {
-	mouse->reloadGraphicsAsset(guiFactory.get());
+	blendState = new CommonStates(device.Get());
+	mouse.reloadGraphicsAsset(&guiFactory);
 	menuScreen->reloadGraphicsAssets();
-	guiOverlay->reloadGraphicsAssets();
+	guiOverlay.reloadGraphicsAssets();
+	errorDialog->reloadGraphicsAsset();
+	warningDialog->reloadGraphicsAsset();
 }
 
 
 void GameManager::update(double deltaTime) {
-	currentScreen->update(deltaTime);
-	guiOverlay->update(deltaTime);
+	if (showDialog->isOpen())
+		showDialog->update(deltaTime);
+	else
+		currentScreen->update(deltaTime);
+	guiOverlay.update(deltaTime);
+
 }
 
 
 void GameManager::draw(SpriteBatch* batch) {
 
-	currentScreen->draw(batch);
-	guiOverlay->draw(batch);
+	batch->Begin(SpriteSortMode_FrontToBack, blendState->NonPremultiplied());
+	{
+		currentScreen->draw(batch);
+		guiOverlay.draw(batch);
+		showDialog->draw(batch);
+		mouse.draw(batch);
+	}
+
+	batch->End();
+
 }
 
 
@@ -153,3 +237,5 @@ size_t GameManager::getSelectedDisplayIndex() {
 size_t GameManager::getSelectedDisplayModeIndex() {
 	return gameEngine->getSelectedDisplayModeIndex();
 }
+
+

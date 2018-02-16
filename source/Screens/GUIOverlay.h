@@ -1,12 +1,14 @@
 #pragma once
 
-#include "../DXTKGui/GUIFactory.h"
+#include "../../DXTKGui/GUIFactory.h"
 #include "../globals.h"
 
 
 class GUIOverlay {
 public:
-	GUIOverlay();
+
+	void initialize();
+
 	virtual ~GUIOverlay();
 
 	void reloadGraphicsAssets();

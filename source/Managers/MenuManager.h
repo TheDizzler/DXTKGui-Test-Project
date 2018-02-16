@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../DXTKGui/GUIFactory.h"
-#include "../DXTKGUI/Effects/ScreenTransitions.h"
-#include "../DXTKGui/Controllers/Selector.h"
+#include "../../DXTKGui/GUIFactory.h"
+#include "../../DXTKGUI/Effects/ScreenTransitions.h"
+#include "../../DXTKGui/Controllers/Selector.h"
 
 class MenuScreen;
 class MainScreen;
@@ -39,8 +39,8 @@ class OnClickListenerAdapterList : public ListBox::ActionListener {
 public:
 	OnClickListenerAdapterList(ConfigScreen* screen) : config(screen) {
 	}
-	virtual void onClick(ListBox* listbox, UINT selectedIndex) override;
-	virtual void onHover(ListBox* listbox, short hoveredItemIndex) override;
+	virtual void onClick(ListBox* listbox, size_t selectedIndex) override;
+	virtual void onHover(ListBox* listbox, int hoveredItemIndex) override;
 private:
 	ConfigScreen* config;
 
@@ -50,8 +50,8 @@ class OnClickListenerDisplayModeList : public ComboBox::ActionListener {
 public:
 	OnClickListenerDisplayModeList(ConfigScreen* screen) : config(screen) {
 	}
-	virtual void onClick(ComboBox* combobox, UINT selectedIndex) override;
-	virtual void onHover(ComboBox * listbox, short hoveredItemIndex) override;
+	virtual void onClick(ComboBox* combobox, size_t selectedIndex) override;
+	virtual void onHover(ComboBox* listbox, int hoveredItemIndex) override;
 private:
 	ConfigScreen* config;
 
@@ -169,7 +169,6 @@ private:
 	Vector2 position = Vector2::Zero;
 
 	GameManager* game;
-
 };
 
 
