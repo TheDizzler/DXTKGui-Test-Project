@@ -155,6 +155,7 @@ public:
 	void openMainMenu();
 	void openConfigMenu();
 
+	void refreshTexture();
 	void refreshDisplayModeList();
 
 	void confirmExit();
@@ -173,7 +174,7 @@ private:
 
 
 /** This class is abstract. */
-interface MenuScreen : public Screen {
+class MenuScreen : public Screen {
 	friend class OnClickListenerSettingsButton;
 	friend class OnClickListenerExitButton;
 public:
@@ -217,12 +218,13 @@ public:
 		PlayerSlotNumber slotNumber) override;
 	virtual void newController(shared_ptr<Joystick> newStick) override;
 
+	void refreshTexture();
 	void populateDisplayList(vector<ComPtr<IDXGIOutput> > displays);
 	void populateDisplayModeList(vector<DXGI_MODE_DESC> displayModes);
 
 private:
 	unique_ptr<TexturePanel> texturePanel;
-	bool refreshTexture = true;
+	bool refreshTexturePanel = true;
 
 	
 	TextLabel* adapterLabel;

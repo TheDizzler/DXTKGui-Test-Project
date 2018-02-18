@@ -8,7 +8,7 @@ const int TEST_BOX_MARGIN = 16;
 
 
 void GUIOverlay::initialize() {
-	fpsLabel.reset(guiFactory.createTextLabel(Vector2(Globals::WINDOW_WIDTH - 250, 20),
+	fpsLabel.reset(guiFactory.createTextLabel(Vector2(float(Globals::WINDOW_WIDTH - 250), 20),
 		L"", "Default Font", true));
 	fpsLabel->setTint(Colors::Black);
 	fpsLabel->setScale(Vector2(.5, .5));

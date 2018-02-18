@@ -6,7 +6,7 @@
 #include "../../DXTKGui/Controllers/KeyboardController.h"
 #include "PlayerSlot.h"
 
-extern unique_ptr<PlayerSlotManager> slotManager;
+extern PlayerSlotManager slotManager;
 extern KeyboardController keys;
 extern MouseController mouse;
 

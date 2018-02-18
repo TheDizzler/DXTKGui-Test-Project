@@ -72,7 +72,7 @@ bool GameManager::initializeGame(GameEngine* gmngn, HWND hwnd, ComPtr<ID3D11Devi
 
 void GameManager::initErrorDialogs() {
 	Vector2 dialogPos, dialogSize;
-	dialogSize = Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2);
+	dialogSize = Vector2(float(Globals::WINDOW_WIDTH) / 2, float(Globals::WINDOW_HEIGHT) / 2);
 	dialogPos = dialogSize;
 	dialogPos.x -= dialogSize.x / 2;
 	dialogPos.y -= dialogSize.y / 2;
@@ -106,7 +106,12 @@ void GameManager::initErrorDialogs() {
 
 
 void GameManager::reloadGraphicsAssets() {
+	device.Reset();
+	device = gameEngine->getDevice();
 	blendState = new CommonStates(device.Get());
+	assMan.reInitDevice(device);
+	guiFactory.reInitDevice(device, gameEngine->getDeviceContext(), gameEngine->getSpriteBatch());
+
 	mouse.reloadGraphicsAsset(&guiFactory);
 	menuScreen->reloadGraphicsAssets();
 	guiOverlay.reloadGraphicsAssets();
@@ -134,9 +139,7 @@ void GameManager::draw(SpriteBatch* batch) {
 		showDialog->draw(batch);
 		mouse.draw(batch);
 	}
-
 	batch->End();
-
 }
 
 
@@ -199,6 +202,10 @@ vector<DXGI_MODE_DESC> GameManager::getDisplayModeList(size_t displayIndex) {
 
 vector<DXGI_MODE_DESC> GameManager::getDisplayModeList(ComPtr<IDXGIOutput> display) {
 	return gameEngine->getDisplayModeList(display);
+}
+
+void GameManager::refreshTexture() {
+	menuScreen->refreshTexture();
 }
 
 void GameManager::refreshDisplayModeList() {

@@ -48,7 +48,9 @@ public:
 	vector<DXGI_MODE_DESC> getDisplayModeList(size_t displayIndex);
 	vector<DXGI_MODE_DESC> getDisplayModeList(ComPtr<IDXGIOutput> display);
 
+	void refreshTexture();
 	void refreshDisplayModeList();
+
 
 	bool setAdapter(size_t adapterIndex);
 	bool setDisplayMode(size_t displayModeIndex);

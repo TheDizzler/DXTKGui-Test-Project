@@ -5,7 +5,7 @@
 
 GameEngine::~GameEngine() {
 
-	
+
 	if (audioEngine != NULL)
 		audioEngine->Suspend();
 
@@ -52,7 +52,6 @@ void GameEngine::onAudioDeviceChange() {
 }
 
 void GameEngine::reloadGraphicsAssets() {
-	guiFactory.reInitDevice(device, deviceContext, batch.get());
 	game.reloadGraphicsAssets();
 }
 
@@ -73,11 +72,17 @@ void GameEngine::run(double deltaTime) {
 	if (changeDisplay) {
 		switch (changeType) {
 			case DisplayChangeType::FULL_SCREEN:
-				setFullScreen(changeVariable);
+			{
+				bool toFullScreen = true;
+				if (changeVariable == 0)
+					toFullScreen = false;
+				setFullScreen(toFullScreen);
 				mouse.resetPressed();
-				break;
+			}
+			break;
 			case DisplayChangeType::DISPLAY_MODE:
 				changeDisplayMode(changeVariable);
+				game.refreshTexture();
 				break;
 			case DisplayChangeType::DISPLAY_ADAPTER:
 				setAdapter(changeVariable);
@@ -113,7 +118,7 @@ void GameEngine::update(double deltaTime) {
 
 	mouse.saveMouseState();
 	keys.saveKeyState();
-	slotManager->updateGamePads();
+	slotManager.updateGamePads();
 
 	game.update(deltaTime);
 }

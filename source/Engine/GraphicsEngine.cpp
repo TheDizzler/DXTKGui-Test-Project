@@ -229,8 +229,8 @@ void GraphicsEngine::initializeViewport() {
 	ZeroMemory(&mainViewport, sizeof(D3D11_VIEWPORT));
 	mainViewport.TopLeftX = 0;
 	mainViewport.TopLeftY = 0;
-	mainViewport.Width = Globals::WINDOW_WIDTH;
-	mainViewport.Height = Globals::WINDOW_HEIGHT;
+	mainViewport.Width = (float) Globals::WINDOW_WIDTH;
+	mainViewport.Height = (float) Globals::WINDOW_HEIGHT;
 	mainViewport.MinDepth = 0.0f;
 	mainViewport.MaxDepth = 1.0f;
 	deviceContext->RSSetViewports(1, &mainViewport);
@@ -508,6 +508,10 @@ size_t GraphicsEngine::getSelectedDisplayIndex() {
 
 size_t GraphicsEngine::getSelectedDisplayModeIndex() {
 	return selectedDisplayModeIndex;
+}
+
+ComPtr<ID3D11Device> GraphicsEngine::getDevice() {
+	return device;
 }
 
 ComPtr<ID3D11DeviceContext> GraphicsEngine::getDeviceContext() {

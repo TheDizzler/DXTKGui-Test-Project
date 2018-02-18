@@ -31,7 +31,7 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device) {
 
 	{
 		Vector2 dialogPos, dialogSize;
-		dialogSize = Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2);
+		dialogSize = Vector2(float(Globals::WINDOW_WIDTH) / 2, float(Globals::WINDOW_HEIGHT) / 2);
 		dialogPos = dialogSize;
 		dialogPos.x -= dialogSize.x / 2;
 		dialogPos.y -= dialogSize.y / 2;
@@ -62,13 +62,13 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device) {
 			Vector2(-200, -200), exitDialog->getPosition(),
 			Vector2(.001, .001), Vector2(1, 1)));*/
 			new TransitionEffects::GrowTransition(exitDialog.get(),
-				Vector2(.0001, 0001), Vector2(1, 1)));
+				Vector2(.0001f, .0001f), Vector2(1, 1)));
 		/*new TransitionEffects::SlideTransition(exitDialog.get(),
 		Vector2(-200, -200), exitDialog->getPosition()));*/
 
 		exitDialog->setCloseTransition(
 			new TransitionEffects::ShrinkTransition(exitDialog.get(),
-				Vector2(1, 1), Vector2(.001, .001)));
+				Vector2(1, 1), Vector2(.001f, .001f)));
 
 	}
 
@@ -97,9 +97,10 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device) {
 }
 
 void MenuManager::reloadGraphicsAssets() {
-	exitDialog->reloadGraphicsAsset();
+	
 	configScreen->reloadGraphicsAssets();
 	mainScreen->reloadGraphicsAssets();
+	exitDialog->reloadGraphicsAsset();
 	transitionManager->reloadGraphicsAssets();
 }
 
@@ -174,6 +175,10 @@ void MenuManager::openConfigMenu() {
 	// switch screens at next frame
 	switchTo = configScreen.get();
 	transitionManager->transitionBetween(currentScreen, switchTo);
+}
+
+void MenuManager::refreshTexture() {
+	configScreen->refreshTexture();
 }
 
 void MenuManager::refreshDisplayModeList() {
@@ -253,9 +258,9 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device) {
 	Vector2 buttonpos = Vector2(100, 100);
 
 	AnimatedButton* animButton =
-		guiFactory.createAnimatedButton("Launch Button");
-	buttonpos = Vector2((Globals::WINDOW_WIDTH - animButton->getWidth()) / 2,
-		Globals::WINDOW_HEIGHT / 3 - animButton->getHeight() / 2);
+		assMan.createAnimatedButton("Launch Button");
+	buttonpos = Vector2(float(Globals::WINDOW_WIDTH - animButton->getWidth()) / 2,
+		(float) Globals::WINDOW_HEIGHT / 3 - animButton->getHeight() / 2);
 	animButton->setPosition(buttonpos);
 	//guiControls.push_back(animButton);
 	//selector->addControl(animButton);
@@ -272,12 +277,12 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device) {
 
 	buttonpos.y += 150;
 	button = guiFactory.createButton(buttonpos, size, L"Settings");
-	buttonpos.x = (Globals::WINDOW_WIDTH - button->getScaledWidth()) / 2;
+	buttonpos.x = float(Globals::WINDOW_WIDTH - button->getScaledWidth()) / 2;
 	button->setPosition(buttonpos);
 	button->setActionListener(new OnClickListenerSettingsButton(this));
 	LetterJammer* jammer = guiFactory.createLetterJammer(
 		Vector2::Zero, L"Settings", Color(0, 0, 0, 1), false);
-	jammer->setEffect(make_unique<ColorJammer>(.525));
+	jammer->setEffect(make_unique<ColorJammer>(.525f));
 	button->setTextLabel(jammer, true);
 	jammer = NULL;
 	//guiControls.push_back(button);
@@ -287,7 +292,7 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device) {
 	button = guiFactory.createImageButton("Button Up", "Button Down");
 	button->setActionListener(new OnClickListenerExitButton(this));
 	button->setText(L"Exit");
-	buttonpos.x = (Globals::WINDOW_WIDTH - button->getScaledWidth()) / 2;
+	buttonpos.x = float(Globals::WINDOW_WIDTH - button->getScaledWidth()) / 2;
 	buttonpos.y += 150;
 	button->setPosition(buttonpos);
 	//guiControls.push_back(button);
@@ -313,7 +318,6 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device) {
 void MainScreen::reloadGraphicsAssets() {
 	MenuScreen::reloadGraphicsAssets();
 
-	//selector->reloadGraphicsAsset();
 	selectorManager.reloadGraphicsAssets();
 }
 
@@ -496,16 +500,16 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device) {
 	ImageButton* button = (ImageButton*) guiFactory.createImageButton("Button Up", "Button Down");
 	button->setText(L"Back");
 	button->setPosition(
-		Vector2(Globals::WINDOW_WIDTH / 2 - button->getWidth(),
-			Globals::WINDOW_HEIGHT - button->getHeight() - 25));
+		Vector2(float(Globals::WINDOW_WIDTH) / 2 - button->getWidth(),
+			float(Globals::WINDOW_HEIGHT - button->getHeight() - 25)));
 	button->setActionListener(new BackButtonListener(this));
 	guiControls.push_back(button);
 
 	button = (ImageButton*) guiFactory.createImageButton("Button Up", "Button Down");
 	button->setText(L"Apply");
 	button->setPosition(
-		Vector2(Globals::WINDOW_WIDTH / 2,
-			Globals::WINDOW_HEIGHT - button->getHeight() - 25));
+		Vector2(float(Globals::WINDOW_WIDTH) / 2,
+			(float) Globals::WINDOW_HEIGHT - button->getHeight() - 25));
 	guiControls.push_back(button);
 
 	texturePanel.reset(guiFactory.createPanel());
@@ -516,7 +520,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device) {
 
 void ConfigScreen::reloadGraphicsAssets() {
 	MenuScreen::reloadGraphicsAssets();
-	refreshTexture = true;
+	refreshTexturePanel = true;
 }
 
 
@@ -530,11 +534,11 @@ void ConfigScreen::update(double deltaTime) {
 
 	for (auto const& control : guiControls) {
 		if (control->update(deltaTime))
-			refreshTexture = true;
+			refreshTexturePanel = true;
 	}
 
-	if (refreshTexture) {
-		refreshTexture = false;
+	if (refreshTexturePanel) {
+		refreshTexturePanel = false;
 		texturePanel->setTexture(guiFactory.createTextureFromScreen(this));
 	}
 }
@@ -571,6 +575,10 @@ void ConfigScreen::newController(shared_ptr<Joystick> newStick) {
 	spinnerLabel->setPosition(newPos);
 }
 
+
+void ConfigScreen::refreshTexture() {
+	refreshTexturePanel = true;
+}
 
 void ConfigScreen::populateDisplayList(vector<ComPtr<IDXGIOutput>> displays) {
 

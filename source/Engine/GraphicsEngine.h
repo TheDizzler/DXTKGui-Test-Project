@@ -50,6 +50,7 @@ public:
 	size_t getSelectedDisplayIndex();
 	size_t getSelectedDisplayModeIndex();
 
+	ComPtr<ID3D11Device> getDevice();
 	ComPtr<ID3D11DeviceContext> getDeviceContext();
 	/** Used for creating textures from an area on screen */
 	ComPtr<IDXGISwapChain> getSwapChain();
@@ -92,12 +93,12 @@ protected:
 	ComPtr<ID3D11DeviceContext> deviceContext;
 	/* The backbuffer that gets drawn to. */
 	ComPtr<ID3D11RenderTargetView> renderTargetView;
-	
+
 	D3D11_RECT scissorRECTs[1];
 
 	//D3D_DRIVER_TYPE driverType;
 	D3D_FEATURE_LEVEL featureLevel;
-	
+
 
 	/* List of all gfx cards on this machine. */
 	vector<ComPtr<IDXGIAdapter> > adapters;

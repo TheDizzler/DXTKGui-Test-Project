@@ -5,7 +5,7 @@
 #include <fstream>
 
 
-LPCTSTR wndClassName = L"Tender Torrent";
+LPCTSTR wndClassName = L"DXTKGui Test Project";
 HWND hwnd;
 
 
@@ -69,6 +69,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	guidHid.Data4[6] = 0x00;
 	guidHid.Data4[7] = 0x30;
 
+	CoInitialize(0);
 
 	if (!initWindow(hInstance, nShowCmd)) {
 		MessageBox(0, L"Window Initialization - Failed", L"Error", MB_OK);

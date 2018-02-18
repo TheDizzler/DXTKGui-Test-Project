@@ -185,6 +185,7 @@
     <ClInclude Include="DXTKGui\GuiAssets.h" />
     <ClInclude Include="DXTKGui\GUIFactory.h" />
     <ClInclude Include="DXTKGui\StringHelper.h" />
+    <ClInclude Include="source\CustomGUI\AnimatedButton.h" />
     <ClInclude Include="source\Engine\Camera.h" />
     <ClInclude Include="source\Engine\GameEngine.h" />
     <ClInclude Include="source\Engine\GraphicsEngine.h" />
@@ -223,6 +224,7 @@
     <ClCompile Include="DXTKGui\Effects\ScreenTransitions.cpp" />
     <ClCompile Include="DXTKGui\Effects\TransitionEffects.cpp" />
     <ClCompile Include="DXTKGui\GUIFactory.cpp" />
+    <ClCompile Include="source\CustomGUI\AnimatedButton.cpp" />
     <ClCompile Include="source\Engine\Camera.cpp" />
     <ClCompile Include="source\Engine\GameEngine.cpp" />
     <ClCompile Include="source\Engine\GraphicsEngine.cpp" />
@@ -236,7 +238,9 @@
     <ClCompile Include="source\Screens\GUIOverlay.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="assets\AssetManifest.xml" />
+    <Xml Include="assets\AssetManifest.xml">
+      <SubType>Designer</SubType>
+    </Xml>
     <Xml Include="DXTKGui\assets\DXTKGuiManifest.xml" />
   </ItemGroup>
   <ItemGroup>

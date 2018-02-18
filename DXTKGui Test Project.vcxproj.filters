@@ -129,6 +129,9 @@
     <ClCompile Include="DXTKGui\GUIFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\CustomGUI\AnimatedButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Engine\Camera.h">
@@ -249,6 +252,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DXTKGui\StringHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CustomGUI\AnimatedButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
