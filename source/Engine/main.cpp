@@ -211,7 +211,7 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		case WM_CREATE:
 
-			//getInputDeviceInfo(true, L"Devices.txt");
+			getInputDeviceInfo(true, L"Devices.txt");
 
 			RAWINPUTDEVICE rid[1];
 			rid[0].usUsagePage = 1;
@@ -295,14 +295,20 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 							if (gameEngine.gameInitialized)
 								gameEngine.onAudioDeviceChange();
 							return 0;
-						}
-
-
-						if (deviceInterface->dbcc_classguid == guidHid) {
+						} else if (deviceInterface->dbcc_classguid == guidHid) {
 							OutputDebugString(L"Found a controller!\n");
 							registerControllers();
 							return 0;
-						}
+						} /*else {
+						// this block triggers whenever something is plugged into a USB
+						// this is probably the USB bus saying hello
+						// another DBT_DEVICEARRIVAL is triggered with the new device right after
+							wostringstream wss;
+							wss << "classguid: " << deviceInterface->dbcc_name << endl;
+
+							OutputDebugString(L"Found a something!?????\n");
+							OutputDebugString(wss.str().c_str());
+						}*/
 					}
 					break;
 
